@@ -6,9 +6,9 @@ const pgp = require('pg-promise')();
 const connesctionString = "postgress://localhost:5432/facebook_db";
 const db = pgp(connesctionString);
 
-router.get('/', async (req, res) => {
-    let posts = await db.any('SELECT * FROM posts')
-
+router.get('/:user_id', async (req, res) => {
+    let user_id = Number(req.params.user_id)
+    let posts = await db.any('SELECT * FROM posts WHERE poster_id = $1', [user_id])
     try {
         res.json({
             payload: posts, 
@@ -22,10 +22,9 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/:user_id', async (req, res) => {
-    let user_id = Number(req.params.user_id)
-    let posts = await db.any('SELECT * FROM posts WHERE poster_id = $1', [user_id])
-
+router.get('/', async (req, res) => {
+    let posts = await db.any('SELECT * FROM posts')
+    
     try {
         res.json({
             payload: posts, 
